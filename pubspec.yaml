@@ -1,0 +1,38 @@
+name: fitness_app
+description: "A fitness application with workout tracking and exercise plans."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.8.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.5
+  video_player: ^2.8.0
+  animated_text_kit: ^4.2.2
+  like_button: ^2.1.0
+  flutter_animate: ^4.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/workouts/
+    - assets/images/exercises/
+    - assets/images/misc/
+    - assets/full_body.mp4
+    - assets/core.mp4
+    - assets/cardio.mp4
+    - assets/yoga.mp4
+    - assets/legs.mp4
+    - assets/hiit.mp4
+    - assets/stretch.mp4
+    - assets/pilates.mp4

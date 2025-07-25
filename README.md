@@ -1,2 +1,16 @@
-# Fitness-App
-The fitness application, named FitFusion, is a Flutter-based mobile app designed to provide users with a comprehensive platform for managing workouts, tracking exercise progress, and accessing fitness plans. Built using the Flutter framework, it leverages Dart programming and a rich set of third-party packages to deliver an interactive experience.
+# fitness_app
+
+A new Flutter project.
+
+## Getting Started
+
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
