@@ -84,6 +84,15 @@ While the app is robust, there are areas for potential enhancement:
 
 The `FitFusion` fitness app is a well-structured Flutter application that combines a modern UI, interactive animations, and media playback to deliver a compelling fitness experience. By leveraging dependencies like `flutter_animate`, `video_player`, `confetti`, and `like_button`, it creates an engaging interface with smooth transitions, video demonstrations, and celebratory effects. The `pubspec.yaml` ensures all necessary packages and assets are included, with the latest updates (e.g., `flutter_lints: ^6.0.0`, `video_player: ^2.9.1`) providing stability and performance. The app’s modular design, with clear separation of concerns across screens and data models, makes it maintainable and extensible. Developers can further optimize it by removing unused dependencies, enhancing state management, and ensuring robust asset management to deliver a seamless user experience.
 
----
-
-If you need further details about specific components, want to explore potential code improvements, or encounter additional errors (e.g., during `flutter run`), please share the details, and I’ll provide targeted assistance. The provided `main.dart` and `pubspec.yaml` should now work together seamlessly, but let me know if you need additional code snippets or debugging help!
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175423.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175434.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175441.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175448.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175511.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175605.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175612.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175622.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175629.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175637.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175643.png)
+![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175704.png)
