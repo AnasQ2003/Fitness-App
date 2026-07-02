@@ -171,7 +171,7 @@ Track overall fitness progress with metrics charts, unlock achievements, and tog
 
 ## 📜 License
 
-© 2026 **Anas Ahmed**. All Rights Reserved.
+© 2026 **Anas Ahmed Qureshi**. All Rights Reserved.
 
 ---
 
