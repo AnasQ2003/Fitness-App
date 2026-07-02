@@ -1,98 +1,184 @@
-Below is a detailed theoretical overview of the Flutter fitness application, based on the provided `main.dart` code (artifact ID: `83289ca5-d515-4400-8bc8-b8be11c2888a`) and the updated `pubspec.yaml` (artifact ID: `1e4325d0-3b31-4c02-8360-e39e166576f1`, version ID: `68c8b80f-56cd-426f-bee4-3cf6b7aa4e70`). The content explains the app’s structure, functionality, dependencies, and technical components in a comprehensive, paragraph-based format. I’ll describe what the app does, the technologies and packages it uses, and how they contribute to its features, ensuring a thorough understanding of its theoretical foundation.
+<div align="center">
+
+# 🏃‍♂️ FitFusion
+
+### *Premium Flutter Fitness Tracking & Workout Planner Application*
+
+[![Flutter](https://img.shields.io/badge/Flutter-v3.8+-02569B.svg?style=flat-square&logo=flutter)](https://flutter.dev/)
+[![Dart](https://img.shields.io/badge/Dart-v3.8-0175C2.svg?style=flat-square&logo=dart)](https://dart.dev/)
+[![Animate](https://img.shields.io/badge/Flutter_Animate-v4.1-blueviolet.svg?style=flat-square&logo=flutter)](https://pub.dev/packages/flutter_animate)
+[![Video Player](https://img.shields.io/badge/Video_Player-v2.8-blue.svg?style=flat-square&logo=flutter)](https://pub.dev/packages/video_player)
+
+FitFusion is a premium, feature-rich Flutter fitness application designed to manage workouts, track exercise progress, and execute personalized fitness plans. The platform features an elegant modern interface, interactive progress trackers, video demonstrations, and animated achievements.
+
+[🌐 Flutter Documentation](https://docs.flutter.dev/) &nbsp;·&nbsp; [📁 Repository](https://github.com/AnasQ2003/Fitness-App)
+
+</div>
 
 ---
 
-### Overview of the Fitness Application
+## ✨ Features
 
-The fitness application, named `FitFusion`, is a Flutter-based mobile app designed to provide users with a comprehensive platform for managing workouts, tracking exercise progress, and accessing fitness plans. Built using the Flutter framework, it leverages Dart programming and a rich set of third-party packages to deliver an interactive, visually appealing, and user-friendly experience. The app supports features such as browsing workout categories, viewing detailed exercise instructions, playing workout videos, timing exercise sessions, and tracking user progress through plans and achievements. Its modular architecture, defined in `main.dart`, organizes the app into multiple screens (`HomeScreen`, `WorkoutDetailScreen`, `WorkoutTimerScreen`, `WorkoutCompleteScreen`, etc.), each serving a specific purpose in the fitness journey. The `pubspec.yaml` file specifies dependencies and assets critical to the app’s functionality, ensuring seamless integration of UI animations, media playback, and state management.
+- **📊 Comprehensive Workout Categories** — Browse popular exercises across structured disciplines including Cardio, Strength, Yoga, HIIT, Pilates, and Stretching.
+- **⏱️ Active Workout Timer** — Real-time progress timing for exercises with step counts, circular animation progression rings, and play/pause controls.
+- **🎥 Video Demonstrations** — Integrated video player (`video_player`) to watch high-definition video walkthroughs of exercises directly on the workout detail screen.
+- **📈 Structured Workout Plans** — Ready-to-use beginner (4-week) and intermediate (6-week) multi-day fitness calendars.
+- **➕ Custom Plan Creator** — Create and title custom workout plans and add personalized descriptions to adapt to your training goals.
+- **👤 Profile Analytics & Badges** — Track overall achievements and core statistics (Workouts logged, active Hours, total Calories burned) alongside gamified badge indicators.
+- **❤️ Favorites Drawer** — Quickly bookmark workouts using an animated favorite like button to display them in a dedicated favorites tab.
+- **🔍 Fast Search** — Find specific workouts instantly using the built-in search view.
+- **🌙 Premium UI Toggles** — Custom settings panels to easily configure notification triggers and toggle sound effects or dark/light modes.
+- **⚡ Framer-like Animations** — Powered by `flutter_animate` to trigger elegant fade-ins, scales, and item-entrance visual adjustments.
 
-### Core Components and Structure
+---
 
-The app’s entry point is the `FitnessApp` class, a `StatelessWidget` that sets up the Flutter `MaterialApp` with a custom theme using the `Poppins` font and a `deepPurple` primary color scheme. This establishes a consistent visual identity across screens. The app’s navigation is managed through a `PageView` in the `HomeScreen`, which integrates four main sections: `WorkoutCategoriesScreen`, `FavoritesScreen`, `WorkoutPlansScreen`, and `ProfileScreen`. A `BottomNavigationBar` allows users to switch between these sections, with smooth transitions powered by the `PageController`. The `WorkoutCategoriesScreen` displays popular workouts, categories (e.g., Cardio, Strength, Yoga), and quick workouts using `ListView` and `GridView` widgets, showcasing a variety of exercises with images and details. Each workout or category can be tapped to navigate to detailed views, such as `WorkoutDetailScreen` or `CategoryDetailScreen`, enhancing user engagement through hierarchical navigation.
+## 🛠️ Tech Stack & Dependencies
 
-### Key Features and Functionality
+### Core Frameworks
+- **Flutter SDK (>=3.8.1)** — Cross-platform UI development kit.
+- **Dart Language** — High-performance modern app codebase.
 
-The app offers a rich set of features tailored to fitness enthusiasts. Users can browse workouts categorized by type (e.g., HIIT, Yoga, Strength), each represented by a `Workout` object containing attributes like name, duration, difficulty, calories, and associated exercises. The `WorkoutDetailScreen` provides in-depth information, including a video player (using the `video_player` package) to demonstrate exercises, a list of exercise steps, and a favorite toggle with confetti animation (via the `confetti` package). The `WorkoutTimerScreen` implements a timer-based workout system, guiding users through exercises with a progress indicator and animated timer visuals, using `AnimationController` and `Timer` for real-time updates. Upon completing a workout, the `WorkoutCompleteScreen` celebrates the achievement with confetti effects and displays stats like duration and calories burned. The `FavoritesScreen` and `WorkoutPlansScreen` allow users to save preferred workouts and follow structured plans, while the `ProfileScreen` tracks user stats and achievements, enhancing personalization.
+### Third-Party Libraries
+- **`flutter_animate` (v4.1.1)** — Triggers premium entry effects, shakes, and visual cues.
+- **`video_player` (v2.8.0)** — Handles high-performance native mp4 file streaming and playback.
+- **`animated_text_kit` (v4.2.2)** — Animates title headers and typing effects in app bars.
+- **`like_button` (v2.1.0)** — Renders interactive favorite toggles with bubble animation bursts.
+- **`cupertino_icons` (v1.0.5)** — iOS style system vector resources.
 
-### Dependencies and Their Roles
+---
 
-The `pubspec.yaml` file lists several dependencies that power the app’s functionality:
+## 📁 Project Structure
 
-1. **UI and Animations**:
-   - `animated_text_kit: ^4.2.2`: Used in `HomeScreen` to create a typing animation for the app title (`FitFusion`) in the `AppBar`, adding a dynamic visual effect.
-   - `flutter_animate: ^4.5.0`: Provides animation effects across widgets, such as `fadeIn`, `scale`, and `shake` transitions in `WorkoutCard`, `CategoryCard`, and other UI elements, enhancing user experience with smooth, engaging animations.
-   - `like_button: ^2.0.5`: Implements the favorite toggle in `WorkoutCard` and `WorkoutDetailScreen`, with animated heart icons and bubble effects when users mark workouts as favorites.
-   - `confetti: ^0.7.0`: Powers the celebratory confetti animation in `WorkoutCompleteScreen` and `WorkoutDetailScreen` (when favoriting), using `ConfettiController` to create an explosive, colorful effect.
-   - `shimmer: ^3.0.0`, `badges: ^3.1.2`, `flutter_svg: ^2.0.10`: While not used in the provided code, these packages likely support additional UI effects (e.g., loading shimmers, badge indicators, or SVG icon rendering) in unshared parts of the app.
+```
+fitness_app/
+│
+├── assets/                         # Application resources
+│   ├── images/
+│   │   ├── workouts/               # Cardio, Strength, Yoga illustrations
+│   │   ├── exercises/              # Jumping jacks, push-ups, squats thumbnails
+│   │   └── misc/                   # Profile and general icons
+│   └── *.mp4                       # HD exercise demonstration videos
+│
+├── lib/
+│   └── main.dart                   # Single-entry app architecture (UI & routes)
+│
+├── test/                           # Widget and unit testing suite
+├── pubspec.yaml                    # Dependency configuration manifest
+├── analysis_options.yaml           # Lint formatting definitions
+└── README.md
+```
 
-2. **Media**:
-   - `video_player: ^2.9.1`: Enables video playback in `WorkoutDetailScreen`, allowing users to view exercise demonstrations via `VideoPlayerController` with assets like `assets/full_body.mp4`.
-   - `cached_network_image: ^3.4.1`: Likely used for loading network images efficiently in unshared screens, with caching to reduce load times.
+---
 
-3. **State Management**:
-   - `provider: ^6.1.2`: Although not explicitly used in the provided code, it’s likely employed for state management in unshared features, such as persisting user preferences or workout progress across sessions.
+## 🚀 Getting Started
 
-4. **Utilities**:
-   - `intl: ^0.20.2`: Supports formatting (e.g., time formatting in `WorkoutTimerScreen`’s `_formatTime` method) for internationalization.
-   - `shared_preferences: ^2.3.2`: Likely used for persisting user settings or data (e.g., favorite workouts or profile settings) in unshared features.
-   - `percent_indicator: ^4.2.3`: Potentially used for progress visualization in unshared screens, such as `PlanProgressScreen`’s progress bar.
-   - `flutter_screenutil: ^5.9.3`: Ensures responsive UI by adapting widget sizes to different screen dimensions, likely used in unshared layouts.
+### Prerequisites
+- **Flutter SDK** (v3.8.0 or higher)
+- **Dart SDK** (v3.8.0 or higher)
+- An **Android Emulator / iOS Simulator** or a physical test device
 
-5. **Navigation**:
-   - `go_router: ^16.0.0`: While not used in the provided code, it’s likely intended for advanced routing in unshared features, offering type-safe navigation and deep linking.
+---
 
-6. **Dev Dependencies**:
-   - `flutter_lints: ^6.0.0`: Enforces coding standards and best practices during development, ensuring clean, maintainable code.
-   - `build_runner: ^2.4.13`: Supports code generation, possibly for unshared features like data serialization.
-   - `flutter_test`: Enables unit and widget testing to ensure app reliability.
+### Setup Instructions
 
-### Asset and Font Management
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/AnasQ2003/Fitness-App.git
+   cd Fitness-App
+   ```
 
-The app relies heavily on assets for its visual appeal, as defined in the `pubspec.yaml` under the `flutter.assets` section. Image assets (e.g., `assets/images/exercises/jumping_jacks.png`, `assets/images/workouts/cardio.webp`) are used in `WorkoutCard`, `QuickWorkoutTile`, and other screens to display workout thumbnails. Video assets (e.g., `assets/videos/full_body.mp4`) are loaded in `WorkoutDetailScreen` for exercise demonstrations. The `Poppins` font, specified under `flutter.fonts`, is used throughout the app (via `ThemeData.fontFamily`) to ensure a consistent, modern typography style with weights ranging from Regular to Bold. Additional asset directories (`assets/animations/`, `assets/icons/`) suggest support for animations or custom icons in unshared features, enhancing the app’s visual richness.
+2. **Install Flutter Dependencies:**
+   ```bash
+   flutter pub get
+   ```
 
-### Technical Implementation Details
+3. **Verify Connected Devices:**
+   ```bash
+   flutter devices
+   ```
 
-The app’s technical foundation is built on Flutter’s widget-based architecture. Key technical aspects include:
+4. **Run the Application:**
+   ```bash
+   flutter run
+   ```
 
-1. **Widget Lifecycle Management**:
-   - `StatefulWidget`s like `HomeScreen`, `WorkoutCard`, `WorkoutDetailScreen`, `WorkoutTimerScreen`, and `WorkoutCompleteScreen` use `initState` and `dispose` methods to manage resources (e.g., `AnimationController`, `VideoPlayerController`, `ConfettiController`, `Timer`). For example, `WorkoutCompleteScreen` initializes and disposes of the `ConfettiController` to prevent memory leaks.
-   - `TickerProviderStateMixin` in `HomeScreen` and `WorkoutTimerScreen` supports animations, ensuring smooth transitions and timer updates.
+---
 
-2. **Navigation**:
-   - The app uses `Navigator.push` for screen transitions (e.g., from `WorkoutCard` to `WorkoutDetailScreen`) and `PageView` with `BottomNavigationBar` for top-level navigation. While `go_router` is included, it’s not used in the provided code, suggesting potential use in advanced routing scenarios.
+## 📷 Screenshots Gallery
 
-3. **Animations**:
-   - The `flutter_animate` package powers effects like `fadeIn`, `scale`, and `slide` across widgets, enhancing interactivity. For instance, `WorkoutCard` uses `animate().scale().then().shake()` for a dynamic entrance effect.
-   - The `animated_text_kit` package creates a typing animation for the app title in `HomeScreen`’s `AppBar`.
+A visual walkthrough of the FitFusion interface showcasing its main sections, detailed workout screens, video players, and user profile configuration.
 
-4. **Media Playback**:
-   - The `video_player` package in `WorkoutDetailScreen` initializes `VideoPlayerController` with asset videos, supporting play/pause functionality and progress indicators for a seamless user experience.
+### 📱 1. Explore Workouts & Categories
 
-5. **Data Models**:
-   - The app defines `Workout`, `WorkoutPlan`, `Exercise`, and `WorkoutCategory` classes to structure data. For example, `Workout` includes fields like `id`, `name`, `imageUrl`, `videoUrl`, `exercises`, and `isFavorite`, enabling rich data representation and manipulation.
+The home dashboard is the central hub where users can filter exercises by categories or select popular ready-to-run workouts.
 
-### Potential Improvements and Considerations
+<table>
+  <tr>
+    <td><img src="Screenshot_2025-07-25_175423.png" width="270" /><br/><sub>Home Dashboard & Categories</sub></td>
+    <td><img src="Screenshot_2025-07-25_175704.png" width="270" /><br/><sub>Quick Workouts List</sub></td>
+    <td><img src="Screenshot_2025-07-25_175612.png" width="270" /><br/><sub>Search & Find Workouts</sub></td>
+  </tr>
+</table>
 
-While the app is robust, there are areas for potential enhancement:
-- **Unused Dependencies**: The `pubspec.yaml` includes dependencies (`shimmer`, `badges`, `cached_network_image`, `provider`, `percent_indicator`, `flutter_screenutil`, `go_router`) not used in the provided code. Removing unused dependencies could reduce app size and build time, but they should be retained if used in unshared features.
-- **Asset Validation**: Missing or incorrectly named assets (e.g., `assets/images/misc/profile_placeholder.avif`) could cause runtime errors. Developers should verify all asset paths and ensure case sensitivity matches.
-- **State Management**: The `provider` package suggests state management capabilities, but the provided code relies on `setState`. Integrating `provider` for global state (e.g., user preferences, workout progress) could improve scalability.
-- **Error Handling**: The app could benefit from robust error handling for video loading or timer failures to enhance reliability.
-- **Testing**: The `flutter_test` dependency enables unit and widget testing, which should be leveraged to ensure feature stability, especially for critical components like the workout timer.
+### 🏋️‍♂️ 2. Workout Details & Exercises
 
-### Conclusion
+Tapping any workout loads its detail sheet, displaying difficulty metrics, calories, custom exercises, and instructional steps.
 
-The `FitFusion` fitness app is a well-structured Flutter application that combines a modern UI, interactive animations, and media playback to deliver a compelling fitness experience. By leveraging dependencies like `flutter_animate`, `video_player`, `confetti`, and `like_button`, it creates an engaging interface with smooth transitions, video demonstrations, and celebratory effects. The `pubspec.yaml` ensures all necessary packages and assets are included, with the latest updates (e.g., `flutter_lints: ^6.0.0`, `video_player: ^2.9.1`) providing stability and performance. The app’s modular design, with clear separation of concerns across screens and data models, makes it maintainable and extensible. Developers can further optimize it by removing unused dependencies, enhancing state management, and ensuring robust asset management to deliver a seamless user experience.
+<table>
+  <tr>
+    <td><img src="Screenshot_2025-07-25_175434.png" width="270" /><br/><sub>Workout Details & Video Player</sub></td>
+    <td><img src="Screenshot_2025-07-25_175441.png" width="270" /><br/><sub>Exercise Instructions — Jumping Jacks</sub></td>
+    <td><img src="Screenshot_2025-07-25_175448.png" width="270" /><br/><sub>Exercise Instructions — Squats</sub></td>
+  </tr>
+</table>
 
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175423.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175434.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175441.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175448.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175511.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175605.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175612.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175622.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175629.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175637.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175643.png)
-![image alt](https://github.com/AnasQ2003/Fitness-App/blob/ac1f33e91809e7c7171a3936c51a850ad0a390f4/Screenshot%202025-07-25%20175704.png)
+### ⏱️ 3. Active Workout Timer
+
+A dedicated timer screen guides users through their routine, tracking progress counts and timer durations dynamically.
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="Screenshot_2025-07-25_175511.png" width="270" /><br/><sub>Interactive Active Workout Timer</sub>
+    </td>
+  </tr>
+</table>
+
+### 📅 4. Workout Plans & Favorites
+
+Organize workouts by following structured beginner or intermediate programs, or save favorites to view them instantly.
+
+<table>
+  <tr>
+    <td><img src="Screenshot_2025-07-25_175622.png" width="270" /><br/><sub>Workout Plans & Programs</sub></td>
+    <td><img src="Screenshot_2025-07-25_175629.png" width="270" /><br/><sub>Create Custom Plan Dialog</sub></td>
+    <td><img src="Screenshot_2025-07-25_175605.png" width="270" /><br/><sub>Favorites Drawer (Empty State)</sub></td>
+  </tr>
+</table>
+
+### 👤 5. Profile Analytics & Settings
+
+Track overall fitness progress with metrics charts, unlock achievements, and toggle settings like dark mode themes.
+
+<table>
+  <tr>
+    <td><img src="Screenshot_2025-07-25_175637.png" width="270" /><br/><sub>User Profile Stats & Achievements</sub></td>
+    <td><img src="Screenshot_2025-07-25_175643.png" width="270" /><br/><sub>Profile Settings & Options</sub></td>
+  </tr>
+</table>
+
+---
+
+## 📜 License
+
+© 2026 **Anas Ahmed**. All Rights Reserved.
+
+---
+
+<div align="center">
+
+Built with ❤️ using **Flutter & Dart**
+
+⭐ If you found this app helpful, please give the repository a star!
+
+</div>
