@@ -1,6 +1,6 @@
 # 🏃‍♂️ FitFusion — Premium Flutter Fitness Tracking & Workout Planner Application
 
-🎬 **Watch the Demo Video — FitFusion:** [https://github.com/AnasQ2003/Fitness-App/blob/main/videos/Video_Fitness.mp4](https://github.com/AnasQ2003/Fitness-App/blob/main/videos/Video_Fitness.mp4)
+🎬 **Watch the Demo Video — FitFusion:** [https://github.com/AnasQ2003/Fitness-App/blob/main/videos/Video_Fitness.mp4](https://www.youtube.com/shorts/EFmRFCo_3W0)
 
 [![Flutter](https://img.shields.io/badge/Flutter-v3.8+-02569B.svg?style=flat-square&logo=flutter)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-v3.8-0175C2.svg?style=flat-square&logo=dart)](https://dart.dev/)
