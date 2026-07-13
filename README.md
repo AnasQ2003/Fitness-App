@@ -1,8 +1,6 @@
-<div align="center">
+# 🏃‍♂️ FitFusion — Premium Flutter Fitness Tracking & Workout Planner Application
 
-# 🏃‍♂️ FitFusion
-
-### *Premium Flutter Fitness Tracking & Workout Planner Application*
+🎬 **Watch the Demo Video — FitFusion:** [https://github.com/AnasQ2003/Fitness-App/blob/main/videos/Video_Fitness.mp4](https://github.com/AnasQ2003/Fitness-App/blob/main/videos/Video_Fitness.mp4)
 
 [![Flutter](https://img.shields.io/badge/Flutter-v3.8+-02569B.svg?style=flat-square&logo=flutter)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-v3.8-0175C2.svg?style=flat-square&logo=dart)](https://dart.dev/)
@@ -10,10 +8,6 @@
 [![Video Player](https://img.shields.io/badge/Video_Player-v2.8-blue.svg?style=flat-square&logo=flutter)](https://pub.dev/packages/video_player)
 
 FitFusion is a premium, feature-rich Flutter fitness application designed to manage workouts, track exercise progress, and execute personalized fitness plans. The platform features an elegant modern interface, interactive progress trackers, video demonstrations, and animated achievements.
-
-[🌐 Flutter Documentation](https://docs.flutter.dev/) &nbsp;·&nbsp; [📁 Repository](https://github.com/AnasQ2003/Fitness-App)
-
-</div>
 
 ---
 
@@ -62,6 +56,10 @@ fitness_app/
 ├── lib/
 │   └── main.dart                   # Single-entry app architecture (UI & routes)
 │
+├── screenshot/                     # Walkthrough screenshots of the application
+├── videos/                         # Demo and tutorial recording videos
+│   └── Video_Fitness.mp4           # App walkthrough video demonstration
+│
 ├── test/                           # Widget and unit testing suite
 ├── pubspec.yaml                    # Dependency configuration manifest
 ├── analysis_options.yaml           # Lint formatting definitions
@@ -106,64 +104,73 @@ fitness_app/
 
 ## 📷 Screenshots Gallery
 
-A visual walkthrough of the FitFusion interface showcasing its main sections, detailed workout screens, video players, and user profile configuration.
+A complete visual walkthrough of the FitFusion interface showcasing its onboarding flow, workouts dashboard, category details, active workout timer, planner, nutrition logs, analytics, and dark mode configuration.
 
-### 📱 1. Explore Workouts & Categories
-
-The home dashboard is the central hub where users can filter exercises by categories or select popular ready-to-run workouts.
-
-<table>
+<table align="center">
   <tr>
-    <td><img src="Screenshot_2025-07-25_175423.png" width="270" /><br/><sub>Home Dashboard & Categories</sub></td>
-    <td><img src="Screenshot_2025-07-25_175704.png" width="270" /><br/><sub>Quick Workouts List</sub></td>
-    <td><img src="Screenshot_2025-07-25_175612.png" width="270" /><br/><sub>Search & Find Workouts</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053303.png" width="250"/><br/><sub>1. Splash & Welcome</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053310.png" width="250"/><br/><sub>2. Login Screen</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053327.png" width="250"/><br/><sub>3. Sign Up Screen</sub></td>
   </tr>
-</table>
-
-### 🏋️‍♂️ 2. Workout Details & Exercises
-
-Tapping any workout loads its detail sheet, displaying difficulty metrics, calories, custom exercises, and instructional steps.
-
-<table>
   <tr>
-    <td><img src="Screenshot_2025-07-25_175434.png" width="270" /><br/><sub>Workout Details & Video Player</sub></td>
-    <td><img src="Screenshot_2025-07-25_175441.png" width="270" /><br/><sub>Exercise Instructions — Jumping Jacks</sub></td>
-    <td><img src="Screenshot_2025-07-25_175448.png" width="270" /><br/><sub>Exercise Instructions — Squats</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053358.png" width="250"/><br/><sub>4. Onboarding Welcome</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053408.png" width="250"/><br/><sub>5. Gender Selection</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053418.png" width="250"/><br/><sub>6. Age Selection</sub></td>
   </tr>
-</table>
-
-### ⏱️ 3. Active Workout Timer
-
-A dedicated timer screen guides users through their routine, tracking progress counts and timer durations dynamically.
-
-<table>
   <tr>
-    <td align="center">
-      <img src="Screenshot_2025-07-25_175511.png" width="270" /><br/><sub>Interactive Active Workout Timer</sub>
-    </td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053432.png" width="250"/><br/><sub>7. Height & Weight Setup</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053558.png" width="250"/><br/><sub>8. Home Dashboard</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053609.png" width="250"/><br/><sub>9. App Drawer Menu</sub></td>
   </tr>
-</table>
-
-### 📅 4. Workout Plans & Favorites
-
-Organize workouts by following structured beginner or intermediate programs, or save favorites to view them instantly.
-
-<table>
   <tr>
-    <td><img src="Screenshot_2025-07-25_175622.png" width="270" /><br/><sub>Workout Plans & Programs</sub></td>
-    <td><img src="Screenshot_2025-07-25_175629.png" width="270" /><br/><sub>Create Custom Plan Dialog</sub></td>
-    <td><img src="Screenshot_2025-07-25_175605.png" width="270" /><br/><sub>Favorites Drawer (Empty State)</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053620.png" width="250"/><br/><sub>10. Search Workouts</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053640.png" width="250"/><br/><sub>11. Filter Categories</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053648.png" width="250"/><br/><sub>12. Categories Grid</sub></td>
   </tr>
-</table>
-
-### 👤 5. Profile Analytics & Settings
-
-Track overall fitness progress with metrics charts, unlock achievements, and toggle settings like dark mode themes.
-
-<table>
   <tr>
-    <td><img src="Screenshot_2025-07-25_175637.png" width="270" /><br/><sub>User Profile Stats & Achievements</sub></td>
-    <td><img src="Screenshot_2025-07-25_175643.png" width="270" /><br/><sub>Profile Settings & Options</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053702.png" width="250"/><br/><sub>13. Cardio Category Details</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053716.png" width="250"/><br/><sub>14. Strength Category Details</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053725.png" width="250"/><br/><sub>15. Yoga Category Details</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053737.png" width="250"/><br/><sub>16. HIIT Category Details</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053806.png" width="250"/><br/><sub>17. Workout Detail View</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053818.png" width="250"/><br/><sub>18. Video Demonstrations</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053834.png" width="250"/><br/><sub>19. Exercise Step Items</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053843.png" width="250"/><br/><sub>20. Detailed Descriptions</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053850.png" width="250"/><br/><sub>21. Start Workout Actions</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053903.png" width="250"/><br/><sub>22. Workout Timer Setup</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053911.png" width="250"/><br/><sub>23. Active Timer Running</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053934.png" width="250"/><br/><sub>24. Timer Paused View</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053941.png" width="250"/><br/><sub>25. Workout Completed</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20053951.png" width="250"/><br/><sub>26. Workout Plans List</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054003.png" width="250"/><br/><sub>27. Create Custom Plan</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054020.png" width="250"/><br/><sub>28. Plan Details & Weeks</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054029.png" width="250"/><br/><sub>29. Plan Workouts Calendar</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054046.png" width="250"/><br/><sub>30. Favorites Drawer (Empty)</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054104.png" width="250"/><br/><sub>31. Favorites Bookmarked</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054113.png" width="250"/><br/><sub>32. Profile Stats & Badges</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054122.png" width="250"/><br/><sub>33. Performance History</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054132.png" width="250"/><br/><sub>34. Nutrition Daily Log</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054138.png" width="250"/><br/><sub>35. Nutrition Details Log</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054149.png" width="250"/><br/><sub>36. Settings & Config Menu</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054158.png" width="250"/><br/><sub>37. Dark Mode Configuration</sub></td>
+    <td align="center"><img src="screenshot/Screenshot%202026-07-13%20054254.png" width="250"/><br/><sub>38. Help & Contact Center</sub></td>
+    <td></td>
   </tr>
 </table>
 
@@ -175,10 +182,6 @@ Track overall fitness progress with metrics charts, unlock achievements, and tog
 
 ---
 
-<div align="center">
-
 Built with ❤️ using **Flutter & Dart**
 
 ⭐ If you found this app helpful, please give the repository a star!
-
-</div>

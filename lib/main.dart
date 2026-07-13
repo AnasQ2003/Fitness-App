@@ -5,17 +5,1135 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:like_button/like_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:async';
+import 'dart:math';
+import 'dart:ui';
 
 void main() {
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
-  runApp(const FitnessApp());
+  runApp(const MobileShell());
 }
 
+// MobileShell: the outermost widget that wraps everything in a phone bezel
+class MobileShell extends StatefulWidget {
+  const MobileShell({super.key});
+
+  @override
+  State<MobileShell> createState() => _MobileShellState();
+}
+
+class _MobileShellState extends State<MobileShell> {
+  late Timer _clockTimer;
+  String _timeString = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _updateTime();
+    _clockTimer = Timer.periodic(const Duration(seconds: 30), (_) => _updateTime());
+  }
+
+  @override
+  void dispose() {
+    _clockTimer.cancel();
+    super.dispose();
+  }
+
+  void _updateTime() {
+    final now = DateTime.now();
+    final t = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+    if (t != _timeString) setState(() => _timeString = t);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'FitFusion',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        fontFamily: 'Poppins',
+        appBarTheme: const AppBarTheme(
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+      ),
+      home: Scaffold(
+        backgroundColor: const Color(0xFF1A1A2E),
+        body: Center(
+          child: _buildPhoneBezel(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhoneBezel() {
+    return Container(
+      width: 393,
+      height: 852,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(52),
+        border: Border.all(color: const Color(0xFF2A2A2A), width: 3),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.8),
+            blurRadius: 40,
+            spreadRadius: 5,
+            offset: const Offset(0, 20),
+          ),
+          BoxShadow(
+            color: Colors.deepPurple.withOpacity(0.15),
+            blurRadius: 60,
+            spreadRadius: 10,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(49),
+        child: Stack(
+          children: [
+            // The actual app
+            Positioned.fill(
+              child: MediaQuery(
+                data: const MediaQueryData(
+                  size: Size(393, 852),
+                  devicePixelRatio: 1.0,
+                  padding: EdgeInsets.only(top: 54, bottom: 34),
+                  viewPadding: EdgeInsets.only(top: 54, bottom: 34),
+                ),
+                child: const FitnessApp(),
+              ),
+            ),
+
+            // Dynamic Island / Status bar background
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 54,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.transparent,
+                ),
+                child: Stack(
+                  children: [
+                    // Time left
+                    Positioned(
+                      left: 24,
+                      top: 14,
+                      child: Text(
+                        _timeString,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                    ),
+                    // Dynamic Island pill
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 12),
+                        width: 120,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                    // Status icons right
+                    Positioned(
+                      right: 20,
+                      top: 16,
+                      child: Row(
+                        children: const [
+                          Icon(Icons.signal_cellular_4_bar, size: 14, color: Colors.black),
+                          SizedBox(width: 4),
+                          Icon(Icons.wifi, size: 14, color: Colors.black),
+                          SizedBox(width: 4),
+                          Icon(Icons.battery_full, size: 14, color: Colors.black),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Home Indicator bar at bottom
+            Positioned(
+              bottom: 8,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  width: 134,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// The user session storage
+class UserSession {
+  static final UserSession _instance = UserSession._internal();
+  factory UserSession() => _instance;
+  UserSession._internal();
+
+  String name = "Alex Johnson";
+  String email = "alex.johnson@fitfusion.com";
+  String fitnessGoal = "Build Muscle & Stay Fit";
+  double weight = 72.5;
+  double height = 178.0;
+  int dailyCalorieGoal = 2200;
+
+  List<MealLog> mealLogs = [
+    MealLog(name: "Oatmeal with Berries", calories: 350, type: "Breakfast", time: "08:15 AM"),
+    MealLog(name: "Grilled Chicken Salad", calories: 520, type: "Lunch", time: "01:30 PM"),
+    MealLog(name: "Protein Shake", calories: 250, type: "Snack", time: "05:00 PM"),
+  ];
+
+  List<WorkoutProgress> workoutHistory = [
+    WorkoutProgress(day: "Mon", durationMin: 45, caloriesBurned: 320),
+    WorkoutProgress(day: "Tue", durationMin: 60, caloriesBurned: 450),
+    WorkoutProgress(day: "Wed", durationMin: 30, caloriesBurned: 210),
+    WorkoutProgress(day: "Thu", durationMin: 50, caloriesBurned: 380),
+    WorkoutProgress(day: "Fri", durationMin: 40, caloriesBurned: 300),
+    WorkoutProgress(day: "Sat", durationMin: 75, caloriesBurned: 550),
+    WorkoutProgress(day: "Sun", durationMin: 0, caloriesBurned: 0),
+  ];
+
+  int get streakCount => 5;
+  int get totalWorkouts => 18;
+}
+
+class MealLog {
+  final String name;
+  final int calories;
+  final String type;
+  final String time;
+  MealLog({required this.name, required this.calories, required this.type, required this.time});
+}
+
+class WorkoutProgress {
+  final String day;
+  final int durationMin;
+  final int caloriesBurned;
+  WorkoutProgress({required this.day, required this.durationMin, required this.caloriesBurned});
+}
+
+// SplashScreen widget
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  double _loadingProgress = 0.0;
+  late Timer _loadingTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadingTimer = Timer.periodic(const Duration(milliseconds: 20), (timer) {
+      setState(() {
+        _loadingProgress += 0.01;
+        if (_loadingProgress >= 1.0) {
+          _loadingProgress = 1.0;
+          _loadingTimer.cancel();
+          Navigator.pushReplacementNamed(context, '/login');
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _loadingTimer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFFFFF), Color(0xFFF0EFFF)],
+          ),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -100,
+              left: -50,
+              child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.deepPurple.withOpacity(0.06),
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -50,
+              right: -50,
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFEC4899).withOpacity(0.04),
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Colors.deepPurple, Color(0xFFEC4899)],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.deepPurple.withOpacity(0.2),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.bolt,
+                      size: 60,
+                      color: Colors.white,
+                    ),
+                  )
+                      .animate()
+                      .scale(duration: 800.ms, curve: Curves.elasticOut)
+                      .fadeIn(duration: 500.ms),
+                  const SizedBox(height: 24),
+                  const Text(
+                    "FitFusion",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 38,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                      letterSpacing: 1.5,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(delay: 200.ms, duration: 600.ms)
+                      .slideY(begin: 0.2, end: 0.0),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 30,
+                    child: DefaultTextStyle(
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 14,
+                        color: Colors.black54,
+                        letterSpacing: 1.0,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      child: AnimatedTextKit(
+                        animatedTexts: [
+                          TypewriterAnimatedText(
+                            'NO EXCUSES. JUST RESULTS.',
+                            speed: const Duration(milliseconds: 80),
+                            cursor: '|',
+                          ),
+                        ],
+                        isRepeatingAnimation: false,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 60),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      width: 200,
+                      height: 6,
+                      color: Colors.black.withOpacity(0.05),
+                      child: Stack(
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 20),
+                            width: 200 * _loadingProgress,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              gradient: const LinearGradient(
+                                colors: [Colors.deepPurple, Color(0xFFEC4899)],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// LoginScreen widget
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _handleLogin() {
+    if (_formKey.currentState!.validate()) {
+      final email = _emailController.text.trim();
+      UserSession().email = email;
+      if (email.contains('@')) {
+        final parts = email.split('@');
+        UserSession().name = parts[0].toUpperCase();
+      } else {
+        UserSession().name = "USER";
+      }
+      
+      Navigator.pushReplacementNamed(context, '/home');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              Text("Welcome back, ${UserSession().name}!"),
+            ],
+          ),
+          backgroundColor: Colors.deepPurple,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFFFFF), Color(0xFFF0EFFF)],
+          ),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -40,
+              right: -50,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.deepPurple.withOpacity(0.06),
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 100,
+              left: -80,
+              child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFEC4899).withOpacity(0.04),
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+            ),
+            SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 40),
+                      Center(
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 70,
+                              height: 70,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [Colors.deepPurple, Color(0xFFEC4899)],
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.bolt,
+                                size: 40,
+                                color: Colors.white,
+                              ),
+                            ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
+                            const SizedBox(height: 16),
+                            const Text(
+                              "FitFusion",
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepPurple,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Log in to continue your journey",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 50),
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.1),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _emailController,
+                              style: const TextStyle(color: Colors.black87),
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.email_outlined, color: Colors.deepPurple),
+                                hintText: 'Email',
+                                hintStyle: TextStyle(color: Colors.black.withOpacity(0.35)),
+                                filled: true,
+                                fillColor: Colors.black.withOpacity(0.03),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide(color: Colors.black.withOpacity(0.05)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.deepPurple, width: 1.5),
+                                ),
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                }
+                                if (!value.contains('@')) {
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: _passwordController,
+                              style: const TextStyle(color: Colors.black87),
+                              obscureText: _obscurePassword,
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.lock_outline, color: Colors.deepPurple),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                    color: Colors.deepPurple,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword = !_obscurePassword;
+                                    });
+                                  },
+                                ),
+                                hintText: 'Password',
+                                hintStyle: TextStyle(color: Colors.black.withOpacity(0.35)),
+                                filled: true,
+                                fillColor: Colors.black.withOpacity(0.03),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide(color: Colors.black.withOpacity(0.05)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.deepPurple, width: 1.5),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                if (value.length < 4) {
+                                  return 'Password must be at least 4 characters';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text("Password reset email sent (simulation)."),
+                                      backgroundColor: Colors.pinkAccent,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(
+                                    color: Color(0xFFEC4899),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Container(
+                              width: double.infinity,
+                              height: 52,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                gradient: const LinearGradient(
+                                  colors: [Colors.deepPurple, Color(0xFFEC4899)],
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.deepPurple.withOpacity(0.2),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: _handleLogin,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "LOGIN",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ).animate().fade(delay: 150.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
+                      const SizedBox(height: 30),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/signup');
+                          },
+                          child: RichText(
+                            text: TextSpan(
+                              text: "Don't have an account? ",
+                              style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 13),
+                              children: const [
+                                TextSpan(
+                                  text: "Sign Up",
+                                  style: TextStyle(
+                                    color: Color(0xFFEC4899),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// SignUpScreen widget
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _handleSignUp() {
+    if (_formKey.currentState!.validate()) {
+      UserSession().name = _nameController.text.trim();
+      UserSession().email = _emailController.text.trim();
+      
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 8),
+              Text("Account created! Welcome, ${UserSession().name}!"),
+            ],
+          ),
+          backgroundColor: Colors.deepPurple,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFFFFF), Color(0xFFF0EFFF)],
+          ),
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -40,
+              left: -50,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.deepPurple.withOpacity(0.06),
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 100,
+              right: -80,
+              child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFEC4899).withOpacity(0.04),
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+            ),
+            SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.deepPurple),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Create Account",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepPurple,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "Sign up to start tracking your health goals",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.1),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _nameController,
+                              style: const TextStyle(color: Colors.black87),
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.person_outline, color: Colors.deepPurple),
+                                hintText: 'Full Name',
+                                hintStyle: TextStyle(color: Colors.black.withOpacity(0.35)),
+                                filled: true,
+                                fillColor: Colors.black.withOpacity(0.03),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide(color: Colors.black.withOpacity(0.05)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.deepPurple, width: 1.5),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your name';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: _emailController,
+                              style: const TextStyle(color: Colors.black87),
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.email_outlined, color: Colors.deepPurple),
+                                hintText: 'Email',
+                                hintStyle: TextStyle(color: Colors.black.withOpacity(0.35)),
+                                filled: true,
+                                fillColor: Colors.black.withOpacity(0.03),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide(color: Colors.black.withOpacity(0.05)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.deepPurple, width: 1.5),
+                                ),
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                }
+                                if (!value.contains('@')) {
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: _passwordController,
+                              style: const TextStyle(color: Colors.black87),
+                              obscureText: _obscurePassword,
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.lock_outline, color: Colors.deepPurple),
+                                hintText: 'Password',
+                                hintStyle: TextStyle(color: Colors.black.withOpacity(0.35)),
+                                filled: true,
+                                fillColor: Colors.black.withOpacity(0.03),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide(color: Colors.black.withOpacity(0.05)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.deepPurple, width: 1.5),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter a password';
+                                }
+                                if (value.length < 4) {
+                                  return 'Password must be at least 4 characters';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: _confirmPasswordController,
+                              style: const TextStyle(color: Colors.black87),
+                              obscureText: _obscurePassword,
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.lock_outline, color: Colors.deepPurple),
+                                hintText: 'Confirm Password',
+                                hintStyle: TextStyle(color: Colors.black.withOpacity(0.35)),
+                                filled: true,
+                                fillColor: Colors.black.withOpacity(0.03),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: BorderSide(color: Colors.black.withOpacity(0.05)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  borderSide: const BorderSide(color: Colors.deepPurple, width: 1.5),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please confirm your password';
+                                }
+                                if (value != _passwordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 30),
+                            Container(
+                              width: double.infinity,
+                              height: 52,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                gradient: const LinearGradient(
+                                  colors: [Colors.deepPurple, Color(0xFFEC4899)],
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.deepPurple.withOpacity(0.2),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: _handleSignUp,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "SIGN UP",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ).animate().fade(delay: 150.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
+                      const SizedBox(height: 30),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: RichText(
+                            text: TextSpan(
+                              text: "Already have an account? ",
+                              style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 13),
+                              children: const [
+                                TextSpan(
+                                  text: "Sign In",
+                                  style: TextStyle(
+                                    color: Color(0xFFEC4899),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// The actual app content (no phone chrome here)
 class FitnessApp extends StatelessWidget {
   const FitnessApp({super.key});
 
@@ -37,11 +1155,1150 @@ class FitnessApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const HomeScreen(),
+      initialRoute: '/splash',
+      routes: {
+        '/splash': (_) => const SplashScreen(),
+        '/login': (_) => const LoginScreen(),
+        '/signup': (_) => const SignUpScreen(),
+        '/home': (_) => const HomeScreen(),
+      },
     );
   }
 }
 
+// AppDrawer widget
+class AppDrawer extends StatelessWidget {
+  final Function(int)? onTabSelected;
+  const AppDrawer({super.key, this.onTabSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    final session = UserSession();
+    return Drawer(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.deepPurpleAccent, Color(0xFFEC4899)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Text(
+                  session.name.isNotEmpty ? session.name[0] : "U",
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                ),
+              ),
+              accountName: Text(
+                session.name,
+                style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              accountEmail: Text(
+                session.email,
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 13,
+                  color: Colors.white.withOpacity(0.8),
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  _buildDrawerItem(
+                    icon: Icons.home_outlined,
+                    title: "Home",
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (onTabSelected != null) onTabSelected!(0);
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.favorite_border,
+                    title: "Favorites",
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (onTabSelected != null) onTabSelected!(1);
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.restaurant_menu_outlined,
+                    title: "Nutrition",
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (onTabSelected != null) onTabSelected!(2);
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.bar_chart_outlined,
+                    title: "Progress Tracker",
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (onTabSelected != null) onTabSelected!(3);
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.person_outline,
+                    title: "My Profile",
+                    onTap: () {
+                      Navigator.pop(context);
+                      if (onTabSelected != null) onTabSelected!(4);
+                    },
+                  ),
+                  const Divider(color: Colors.black12, thickness: 1),
+                  _buildDrawerItem(
+                    icon: Icons.calendar_today_outlined,
+                    title: "Workout Plans",
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Scaffold(
+                            appBar: AppBar(
+                              backgroundColor: Colors.white,
+                              leading: IconButton(
+                                icon: const Icon(Icons.arrow_back, color: Colors.deepPurple),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              title: const Text(
+                                "Workout Plans",
+                                style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold),
+                              ),
+                              elevation: 0,
+                            ),
+                            body: const WorkoutPlansScreen(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.settings_outlined,
+                    title: "Settings",
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.info_outline,
+                    title: "About",
+                    onTap: () {
+                      Navigator.pop(context);
+                      showAboutDialog(
+                        context: context,
+                        applicationName: "FitFusion",
+                        applicationVersion: "2.0.0",
+                        applicationIcon: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [Colors.deepPurpleAccent, Color(0xFFEC4899)],
+                            ),
+                          ),
+                          child: const Icon(Icons.bolt, color: Colors.white),
+                        ),
+                        children: const [
+                          Text("FitFusion is your premium fitness companion app to track workouts, diet, and progress with beautiful charts and stats."),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            SafeArea(
+              child: _buildDrawerItem(
+                icon: Icons.logout_outlined,
+                title: "Log Out",
+                textColor: Colors.redAccent,
+                iconColor: Colors.redAccent,
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color textColor = Colors.black87,
+    Color iconColor = Colors.deepPurple,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: textColor,
+          fontFamily: 'Poppins',
+          fontSize: 15,
+        ),
+      ),
+      onTap: onTap,
+    );
+  }
+}
+
+// SettingsScreen widget
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _notificationsEnabled = true;
+  bool _darkModeEnabled = true;
+  bool _weeklyReminders = true;
+  double _targetWeight = 70.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.deepPurple),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Settings",
+          style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold),
+        ),
+        elevation: 0,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildSectionHeader("Account"),
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.deepPurple.withOpacity(0.1),
+                child: Text(
+                  UserSession().name.isNotEmpty ? UserSession().name[0] : "U",
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.deepPurple),
+                ),
+              ),
+              title: Text(
+                UserSession().name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(UserSession().email),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                _showEditProfileDialog();
+              },
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildSectionHeader("Preferences"),
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Column(
+              children: [
+                SwitchListTile(
+                  activeColor: Colors.deepPurple,
+                  title: const Text("Push Notifications", style: TextStyle(fontSize: 14)),
+                  subtitle: const Text("Receive daily quotes and workout logs", style: TextStyle(fontSize: 12)),
+                  value: _notificationsEnabled,
+                  onChanged: (val) {
+                    setState(() => _notificationsEnabled = val);
+                  },
+                ),
+                const Divider(height: 1, indent: 16, endIndent: 16),
+                SwitchListTile(
+                  activeColor: Colors.deepPurple,
+                  title: const Text("Dark Theme Mode (UI Only)", style: TextStyle(fontSize: 14)),
+                  value: _darkModeEnabled,
+                  onChanged: (val) {
+                    setState(() => _darkModeEnabled = val);
+                  },
+                ),
+                const Divider(height: 1, indent: 16, endIndent: 16),
+                SwitchListTile(
+                  activeColor: Colors.deepPurple,
+                  title: const Text("Weekly Progress Summary", style: TextStyle(fontSize: 14)),
+                  value: _weeklyReminders,
+                  onChanged: (val) {
+                    setState(() => _weeklyReminders = val);
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          _buildSectionHeader("Fitness Goals"),
+          Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Text("Fitness Goal", style: TextStyle(fontSize: 14)),
+                    trailing: Text(
+                      UserSession().fitnessGoal,
+                      style: const TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                    onTap: _showEditGoalDialog,
+                  ),
+                  const Divider(height: 1, indent: 16, endIndent: 16),
+                  ListTile(
+                    title: const Text("Daily Calorie Goal", style: TextStyle(fontSize: 14)),
+                    trailing: Text(
+                      "${UserSession().dailyCalorieGoal} kcal",
+                      style: const TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                    onTap: _showEditCalorieDialog,
+                  ),
+                  const Divider(height: 1, indent: 16, endIndent: 16),
+                  ListTile(
+                    title: const Text("Target Weight", style: TextStyle(fontSize: 14)),
+                    trailing: Text(
+                      "$_targetWeight kg",
+                      style: const TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                    onTap: () {
+                      _showWeightSliderDialog();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                UserSession().name = "Alex Johnson";
+                UserSession().email = "alex.johnson@fitfusion.com";
+                UserSession().fitnessGoal = "Build Muscle & Stay Fit";
+                UserSession().dailyCalorieGoal = 2200;
+                _targetWeight = 70.0;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Settings reset to defaults.")),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.redAccent,
+              elevation: 0,
+              side: const BorderSide(color: Colors.redAccent),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              minimumSize: const Size(double.infinity, 50),
+            ),
+            child: const Text("Reset Session Data", style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, bottom: 8),
+      child: Text(
+        title.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey,
+          letterSpacing: 0.8,
+        ),
+      ),
+    );
+  }
+
+  void _showEditProfileDialog() {
+    final nameCtrl = TextEditingController(text: UserSession().name);
+    final emailCtrl = TextEditingController(text: UserSession().email);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Edit Profile Info"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameCtrl,
+              decoration: const InputDecoration(labelText: "Full Name"),
+            ),
+            TextField(
+              controller: emailCtrl,
+              decoration: const InputDecoration(labelText: "Email Address"),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                UserSession().name = nameCtrl.text;
+                UserSession().email = emailCtrl.text;
+              });
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditGoalDialog() {
+    final list = ["Lose Weight", "Gain Muscle", "Stay Fit", "Endurance Training"];
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text("Select Fitness Goal"),
+        children: list.map((g) {
+          return SimpleDialogOption(
+            onPressed: () {
+              setState(() {
+                UserSession().fitnessGoal = g;
+              });
+              Navigator.pop(context);
+            },
+            child: Text(g),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  void _showEditCalorieDialog() {
+    final ctrl = TextEditingController(text: UserSession().dailyCalorieGoal.toString());
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Daily Calorie Goal (kcal)"),
+        content: TextField(
+          controller: ctrl,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(hintText: "e.g. 2000"),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () {
+              final val = int.tryParse(ctrl.text);
+              if (val != null) {
+                setState(() {
+                  UserSession().dailyCalorieGoal = val;
+                });
+              }
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showWeightSliderDialog() {
+    double tempWeight = _targetWeight;
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text("Select Target Weight"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("${tempWeight.toStringAsFixed(1)} kg", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Slider(
+                activeColor: Colors.deepPurple,
+                min: 40.0,
+                max: 150.0,
+                value: tempWeight,
+                onChanged: (val) {
+                  setDialogState(() => tempWeight = val);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _targetWeight = tempWeight;
+                });
+                Navigator.pop(context);
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// WorkoutBarChart custom painter widgets
+class WorkoutBarChart extends StatelessWidget {
+  final List<WorkoutProgress> history;
+  const WorkoutBarChart({super.key, required this.history});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 180,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      child: CustomPaint(
+        size: Size.infinite,
+        painter: BarChartPainter(history),
+      ),
+    );
+  }
+}
+
+class BarChartPainter extends CustomPainter {
+  final List<WorkoutProgress> history;
+  BarChartPainter(this.history);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..style = PaintingStyle.fill;
+    
+    final textPainter = TextPainter(
+      textDirection: TextDirection.ltr,
+    );
+
+    final maxVal = history.map((e) => e.caloriesBurned).reduce((a, b) => a > b ? a : b);
+    final maxCal = maxVal > 0 ? maxVal : 500;
+    
+    final width = size.width;
+    final height = size.height;
+    final padding = 20.0;
+    
+    final usableWidth = width;
+    final usableHeight = height - padding;
+    
+    final barWidth = (usableWidth / history.length) * 0.6;
+    final spaceWidth = (usableWidth / history.length) * 0.4;
+    
+    for (int i = 0; i < history.length; i++) {
+      final item = history[i];
+      final barHeight = item.caloriesBurned > 0 
+          ? (item.caloriesBurned / maxCal) * usableHeight
+          : 0.0;
+      
+      final left = i * (barWidth + spaceWidth) + (spaceWidth / 2);
+      final top = usableHeight - barHeight;
+      final right = left + barWidth;
+      final bottom = usableHeight;
+      
+      final rect = RRect.fromRectAndRadius(
+        Rect.fromLTRB(left, top, right, bottom),
+        const Radius.circular(6),
+      );
+      
+      paint.shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Colors.deepPurpleAccent, Colors.deepPurple.withOpacity(0.4)],
+      ).createShader(Rect.fromLTRB(left, top, right, bottom));
+      
+      canvas.drawRRect(rect, paint);
+      
+      textPainter.text = TextSpan(
+        text: item.day,
+        style: const TextStyle(color: Colors.black54, fontSize: 10, fontWeight: FontWeight.bold),
+      );
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        Offset(left + (barWidth - textPainter.width) / 2, usableHeight + 4),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+// NutritionScreen widget
+class NutritionScreen extends StatefulWidget {
+  const NutritionScreen({super.key});
+
+  @override
+  State<NutritionScreen> createState() => _NutritionScreenState();
+}
+
+class _NutritionScreenState extends State<NutritionScreen> {
+  final session = UserSession();
+
+  void _showAddMealBottomSheet() {
+    final nameController = TextEditingController();
+    final caloriesController = TextEditingController();
+    String selectedCategory = "Breakfast";
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+            left: 24,
+            right: 24,
+            top: 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Log a Meal",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: "Meal Name",
+                  hintText: "e.g. Oatmeal, Caesar Salad",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: selectedCategory,
+                decoration: const InputDecoration(
+                  labelText: "Meal Type",
+                  border: OutlineInputBorder(),
+                ),
+                items: ["Breakfast", "Lunch", "Dinner", "Snack"]
+                    .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                    .toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    setModalState(() => selectedCategory = val);
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: caloriesController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: "Calories (kcal)",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    final name = nameController.text.trim();
+                    final cal = int.tryParse(caloriesController.text.trim());
+                    if (name.isNotEmpty && cal != null) {
+                      final now = DateTime.now();
+                      final timeStr = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')} ${now.hour >= 12 ? 'PM' : 'AM'}";
+                      setState(() {
+                        session.mealLogs.add(
+                          MealLog(name: name, calories: cal, type: selectedCategory, time: timeStr),
+                        );
+                      });
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("$name added successfully!")),
+                      );
+                    }
+                  },
+                  child: const Text("Save Meal", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int totalLogged = session.mealLogs.fold(0, (sum, item) => sum + item.calories);
+    double progress = totalLogged / session.dailyCalorieGoal;
+    if (progress > 1.0) progress = 1.0;
+    
+    int proteinLogged = (totalLogged * 0.15).round();
+    int carbsLogged = (totalLogged * 0.55).round();
+    int fatsLogged = (totalLogged * 0.30).round();
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              elevation: 4,
+              shadowColor: Colors.black26,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Calorie Budget",
+                            style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "$totalLogged / ${session.dailyCalorieGoal} kcal",
+                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            totalLogged >= session.dailyCalorieGoal
+                                ? "Daily budget reached! 🎉"
+                                : "${session.dailyCalorieGoal - totalLogged} kcal remaining",
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: totalLogged >= session.dailyCalorieGoal ? Colors.green : Colors.deepPurple,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                        child: SizedBox(
+                          width: 80,
+                          height: 80,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              CircularProgressIndicator(
+                                value: progress,
+                                strokeWidth: 10,
+                                backgroundColor: Colors.deepPurple.withOpacity(0.1),
+                                valueColor: const AlwaysStoppedAnimation<Color>(Colors.deepPurpleAccent),
+                              ),
+                              Center(
+                                child: Text(
+                                  "${(progress * 100).round()}%",
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Macros Breakdown",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+            ),
+            const SizedBox(height: 8),
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    _buildMacroRow("Protein", "${proteinLogged}g / 150g", proteinLogged / 150, Colors.cyan),
+                    const SizedBox(height: 12),
+                    _buildMacroRow("Carbohydrates", "${carbsLogged}g / 220g", carbsLogged / 220, Colors.purple),
+                    const SizedBox(height: 12),
+                    _buildMacroRow("Fats", "${fatsLogged}g / 70g", fatsLogged / 70, Colors.pink),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Today's Meals",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+                TextButton.icon(
+                  onPressed: _showAddMealBottomSheet,
+                  icon: const Icon(Icons.add, size: 18, color: Colors.deepPurple),
+                  label: const Text("Log Meal", style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (session.mealLogs.isEmpty)
+              Container(
+                height: 150,
+                alignment: Alignment.center,
+                child: const Text("No meals logged for today. Let's log one!", style: TextStyle(color: Colors.grey)),
+              )
+            else
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: session.mealLogs.length,
+                itemBuilder: (context, index) {
+                  final meal = session.mealLogs[index];
+                  IconData categoryIcon = Icons.fastfood_outlined;
+                  Color categoryColor = Colors.orange;
+
+                  if (meal.type == "Breakfast") {
+                    categoryIcon = Icons.free_breakfast_outlined;
+                    categoryColor = Colors.amber;
+                  } else if (meal.type == "Lunch") {
+                    categoryIcon = Icons.lunch_dining_outlined;
+                    categoryColor = Colors.blue;
+                  } else if (meal.type == "Dinner") {
+                    categoryIcon = Icons.dinner_dining_outlined;
+                    categoryColor = Colors.indigo;
+                  }
+
+                  return Card(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: categoryColor.withOpacity(0.1),
+                        child: Icon(categoryIcon, color: categoryColor),
+                      ),
+                      title: Text(
+                        meal.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text("${meal.type} • ${meal.time}"),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "${meal.calories} kcal",
+                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                            onPressed: () {
+                              setState(() {
+                                session.mealLogs.removeAt(index);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ).animate().fadeIn(duration: 300.ms).slideX(begin: 0.1, end: 0);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMacroRow(String label, String value, double ratio, Color color) {
+    double progress = ratio;
+    if (progress > 1.0) progress = 1.0;
+    if (progress < 0.0) progress = 0.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+            Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: color)),
+          ],
+        ),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 8,
+            backgroundColor: color.withOpacity(0.1),
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ProgressScreen widget
+class ProgressScreen extends StatefulWidget {
+  const ProgressScreen({super.key});
+
+  @override
+  State<ProgressScreen> createState() => _ProgressScreenState();
+}
+
+class _ProgressScreenState extends State<ProgressScreen> {
+  final session = UserSession();
+  int _activeStreak = 5;
+
+  void _handleDailyCheckIn() {
+    setState(() {
+      _activeStreak++;
+    });
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: const [
+            Text("Streak Confirmed! ", style: TextStyle(fontWeight: FontWeight.bold)),
+            Text("🔥", style: TextStyle(fontSize: 24)),
+          ],
+        ),
+        content: Text(
+          "Great job check-in! Your streak is now $_activeStreak days. Keep pushing your limits!",
+          style: const TextStyle(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Awesome"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              elevation: 4,
+              shadowColor: Colors.deepPurple.withOpacity(0.2),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: const LinearGradient(
+                    colors: [Colors.deepPurpleAccent, Color(0xFF8B5CF6)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Fitness Streak",
+                            style: TextStyle(color: Colors.white70, fontSize: 14),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "$_activeStreak Days Active!",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.deepPurpleAccent,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              elevation: 0,
+                            ),
+                            onPressed: _handleDailyCheckIn,
+                            child: const Text("Daily Check-In", style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "🔥",
+                          style: TextStyle(fontSize: 42),
+                        ),
+                      ),
+                    ).animate().shake(delay: 500.ms, duration: 1.seconds),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "This Week's Stats",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                _buildStatCard("Workouts", "${session.totalWorkouts}", Icons.fitness_center, Colors.amber),
+                const SizedBox(width: 10),
+                _buildStatCard("Active Mins", "340", Icons.timer_outlined, Colors.cyan),
+                const SizedBox(width: 10),
+                _buildStatCard("Calories", "4.2k", Icons.local_fire_department, Colors.pink),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Daily Calories Burned (Mon - Sun)",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 16),
+                    WorkoutBarChart(history: session.workoutHistory),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Recent Achievements",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+            ),
+            const SizedBox(height: 10),
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              child: ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                children: [
+                  _buildAchievementTile("Early Bird", "Completed a workout before 7:00 AM", Icons.wb_sunny_outlined, true),
+                  const Divider(height: 1, indent: 64),
+                  _buildAchievementTile("Calorie Crusher", "Burned over 500 calories in a single plan", Icons.local_fire_department, true),
+                  const Divider(height: 1, indent: 64),
+                  _buildAchievementTile("Century Rider", "Reach 100 total workouts session logs", Icons.emoji_events_outlined, false),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    return Expanded(
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon, color: color, size: 24),
+              const SizedBox(height: 8),
+              Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAchievementTile(String title, String desc, IconData icon, bool unlocked) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: unlocked ? Colors.amber.withOpacity(0.15) : Colors.grey.withOpacity(0.1),
+        child: Icon(icon, color: unlocked ? Colors.amber : Colors.grey),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: unlocked ? Colors.black87 : Colors.grey,
+        ),
+      ),
+      subtitle: Text(desc, style: const TextStyle(fontSize: 12)),
+      trailing: unlocked
+          ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
+          : const Icon(Icons.lock_outline, color: Colors.grey, size: 20),
+    );
+  }
+}
+
+// HomeScreen widget
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -79,14 +2336,30 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFF5F5F5),
+      drawer: AppDrawer(
+        onTabSelected: (index) {
+          setState(() {
+            _currentIndex = index;
+            _pageController.jumpToPage(index);
+          });
+        },
+      ),
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, color: Colors.deepPurple),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
         title: AnimatedTextKit(
           animatedTexts: [
             TyperAnimatedText(
               'FitFusion',
               textStyle: const TextStyle(
-                fontSize: 24,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.deepPurple,
               ),
@@ -96,6 +2369,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           isRepeatingAnimation: false,
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_none_outlined, color: Colors.deepPurple),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("No new notifications! Have a nice workout!"),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.search, color: Colors.deepPurple),
             onPressed: () {
@@ -117,44 +2401,65 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: const [
           WorkoutCategoriesScreen(),
           FavoritesScreen(),
-          WorkoutPlansScreen(),
+          NutritionScreen(),
+          ProgressScreen(),
           ProfileScreen(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-            _pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          });
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.deepPurple,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Plans',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ).animate().fadeIn(duration: 500.ms),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+              _pageController.animateToPage(
+                index,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            });
+          },
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.deepPurple,
+          unselectedItemColor: Colors.grey,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          elevation: 0,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: 'Favorites',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.restaurant),
+              label: 'Nutrition',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart),
+              label: 'Progress',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -168,33 +2473,117 @@ class WorkoutCategoriesScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF6B4EFF), Color(0xFFEC4899)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF6B4EFF).withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Hello, ${UserSession().name}! 👋",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "Let's crush your fitness goals today!",
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.85),
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const CircleAvatar(
+                      backgroundColor: Colors.white24,
+                      radius: 22,
+                      child: Icon(Icons.flash_on, color: Colors.white),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: const [
+                      Icon(Icons.lightbulb_outline, color: Colors.amber, size: 18),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          "Tip: Drinking water before workouts boosts energy!",
+                          style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ).animate().fadeIn(duration: 500.ms).slideY(begin: -0.1, end: 0),
           const Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
               'Popular Workouts',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
           ),
           SizedBox(
-            height: 200,
+            height: 180,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: popularWorkouts.length,
               itemBuilder: (context, index) {
-                return WorkoutCard(workout: popularWorkouts[index]);
+                return WorkoutCard(workout: popularWorkouts[index])
+                    .animate()
+                    .fade(delay: (index * 100).ms, duration: 400.ms)
+                    .slideX(begin: 0.2, end: 0, curve: Curves.easeOutQuad);
               },
             ),
           ),
           const Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.fromLTRB(16, 20, 16, 8),
             child: Text(
               'Workout Categories',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
           ),
@@ -203,23 +2592,27 @@ class WorkoutCategoriesScreen extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 1.2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              childAspectRatio: 1.1,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
             ),
             itemCount: workoutCategories.length,
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             itemBuilder: (context, index) {
-              return CategoryCard(category: workoutCategories[index]);
+              return CategoryCard(category: workoutCategories[index])
+                  .animate()
+                  .fade(delay: (index * 100).ms, duration: 400.ms)
+                  .scale(begin: const Offset(0.95, 0.95), end: const Offset(1.0, 1.0), curve: Curves.easeOutBack);
             },
           ),
           const Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.fromLTRB(16, 20, 16, 8),
             child: Text(
               'Quick Workouts',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
           ),
@@ -254,82 +2647,69 @@ class _WorkoutCardState extends State<WorkoutCard> {
         );
       },
       child: Container(
-        width: 160,
-        margin: const EdgeInsets.symmetric(horizontal: 8),
+        width: 140,
+        margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(12),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-              child: Stack(
-                children: [
-                  Image.asset(
-                    widget.workout.imageUrl,
-                    width: double.infinity,
-                    height: 120,
-                    fit: BoxFit.cover,
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: LikeButton(
-                      size: 30,
-                      isLiked: isFavorite,
-                      onTap: (isLiked) async {
-                        setState(() {
-                          isFavorite = !isFavorite;
-                        });
-                        return !isLiked;
-                      },
-                      likeBuilder: (bool isLiked) {
-                        return Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: isLiked ? Colors.red : Colors.white,
-                          size: 30,
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                child: Stack(
+                  children: [
+                    Image.asset(
+                      widget.workout.imageUrl,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[300],
+                          child: Icon(
+                            Icons.fitness_center,
+                            size: 40,
+                            color: Colors.grey[400],
+                          ),
                         );
                       },
-                      circleColor: const CircleColor(
-                        start: Colors.red,
-                        end: Colors.pinkAccent,
-                      ),
-                      bubblesColor: const BubblesColor(
-                        dotPrimaryColor: Colors.red,
-                        dotSecondaryColor: Colors.pinkAccent,
-                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     widget.workout.name,
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: Colors.black87,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
                     '${widget.workout.duration} min',
                     style: TextStyle(
                       color: Colors.grey[600],
-                      fontSize: 14,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -337,7 +2717,7 @@ class _WorkoutCardState extends State<WorkoutCard> {
             ),
           ],
         ),
-      ).animate().scale(delay: 100.ms).then().shake(),
+      ).animate().fadeIn(delay: 100.ms).slideX(),
     );
   }
 }
@@ -358,46 +2738,48 @@ class CategoryCard extends StatelessWidget {
           ),
         );
       },
-      child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                category.color.withOpacity(0.8),
-                category.color.withOpacity(0.4),
-              ],
-            ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              category.color.withOpacity(0.9),
+              category.color.withOpacity(0.7),
+            ],
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  category.icon,
-                  size: 40,
+          boxShadow: [
+            BoxShadow(
+              color: category.color.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                category.icon,
+                size: 32,
+                color: Colors.white,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                category.name,
+                style: const TextStyle(
                   color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  category.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
-      ).animate().fadeIn().slide(),
+      ).animate().fadeIn(delay: 200.ms).scale(),
     );
   }
 }
@@ -423,13 +2805,15 @@ class QuickWorkoutTile extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.asset(
-            workout.imageUrl,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
+        leading: SizedBox(
+          width: 40,
+          height: 40,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              workout.imageUrl,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         title: Text(
@@ -1423,7 +3807,7 @@ class ProfileScreen extends StatelessWidget {
             const CircleAvatar(
               radius: 50,
               backgroundImage:
-              AssetImage('assets/images/misc/profile_placeholder.avif'),
+              AssetImage('assets/images/misc/profile_placeholder.jpg'),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -1666,11 +4050,13 @@ class ExerciseSearchDelegate extends SearchDelegate {
       itemCount: suggestions.length,
       itemBuilder: (context, index) {
         return ListTile(
-          leading: Image.asset(
-            suggestions[index].imageUrl,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
+          leading: SizedBox(
+            width: 40,
+            height: 40,
+            child: Image.asset(
+              suggestions[index].imageUrl,
+              fit: BoxFit.cover,
+            ),
           ),
           title: Text(suggestions[index].name),
           onTap: () {
@@ -1959,7 +4345,7 @@ final workouts = [
   Workout(
     id: '7',
     name: 'Morning Stretch',
-    imageUrl: 'assets/images/workouts/stretch.avif',
+    imageUrl: 'assets/images/workouts/stretch.jpg',
     videoUrl: 'assets/stretch.mp4',
     description:
     'Gentle stretching routine to wake up your body and improve flexibility.',
