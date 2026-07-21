@@ -1,3 +1,5 @@
+<div align="center">
+
 # 🏃‍♂️ FitFusion — Premium Flutter Fitness Tracking & Workout Planner Application
 
 🎬 **Watch the Demo Video — FitFusion:** [https://github.com/AnasQ2003/Fitness-App/blob/main/videos/Video_Fitness.mp4](https://www.youtube.com/shorts/EFmRFCo_3W0)
@@ -6,6 +8,8 @@
 [![Dart](https://img.shields.io/badge/Dart-v3.8-0175C2.svg?style=flat-square&logo=dart)](https://dart.dev/)
 [![Animate](https://img.shields.io/badge/Flutter_Animate-v4.1-blueviolet.svg?style=flat-square&logo=flutter)](https://pub.dev/packages/flutter_animate)
 [![Video Player](https://img.shields.io/badge/Video_Player-v2.8-blue.svg?style=flat-square&logo=flutter)](https://pub.dev/packages/video_player)
+
+</div>
 
 FitFusion is a premium, feature-rich Flutter fitness application designed to manage workouts, track exercise progress, and execute personalized fitness plans. The platform features an elegant modern interface, interactive progress trackers, video demonstrations, and animated achievements.
 
@@ -181,7 +185,7 @@ A complete visual walkthrough of the FitFusion interface showcasing its onboardi
 ```
 MIT License
 
-Copyright (c) Fitness=App---2026 AnasQ2003
+Copyright (c) Fitness=App --- 2026 AnasQ2003
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
